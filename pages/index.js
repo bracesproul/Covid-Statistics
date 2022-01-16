@@ -1,7 +1,7 @@
 import styles from '../styles/Home.module.css';
 import Link from 'next/link'
 import { HeaderBar } from './components/header';
-const axios = require('axios');
+import axios from 'axios';
 
 export default function Home({ data }) {
   return (
@@ -47,6 +47,10 @@ export const getStaticProps = async () => {
     let data = [];
 
     await Promise.all(dataFromResult.map(async (item, index) => {
+        if (item.iso === 'Others' || 'cruise') {
+            //console.log('found')
+            //return;
+        }
         const options = {
             method: 'GET',
             url: 'https://covid-19-statistics.p.rapidapi.com/reports',
@@ -61,8 +65,17 @@ export const getStaticProps = async () => {
             }
         };
 
-        const result = await axios.request(options);
-        const dataV = result.data.data;
+        //const result = await axios.request(options);
+        //const dataV = result.data.data;
+        let dataV;
+        await axios.request(options).then(response => {
+            dataV = response.data.data;
+        }).catch(error => {
+            console.log('error')
+            return;
+        });
+
+
         let region;
 
         if (dataV[0]?.region === undefined) {

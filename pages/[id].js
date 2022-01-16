@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
-const axios = require('axios');
+import axios from 'axios';
+import { HeaderBar } from './components/header';
 
 export default function Home() {
     const router = useRouter()
@@ -9,6 +10,7 @@ export default function Home() {
 
     return (
         <div>
+            <HeaderBar />
             <h1>Covid Stats</h1>
             <h3>This page will display the broken down and more in depth stats for each country, with the ability to change the date, if US you can change the state and possibly city. </h3>
             <CountryData />
@@ -36,6 +38,8 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async ({ params }) => {
     const id = params.id;
+    let dataOthers = { "null": "null" };
+    if ( id === "Others" || "cruise" ) return { props: { dataOthers } }
     const options = {
         method: 'GET',
         url: 'https://covid-19-statistics.p.rapidapi.com/reports',
@@ -48,8 +52,14 @@ export const getStaticProps = async ({ params }) => {
             'x-rapidapi-key': "0a0ac6083dmshd4b9d1a80ab8e97p1c323ejsn671ecebffd29"
         }
     };
-    const result = await axios.request(options);
-    const data = result.data.data[0];
+    //const result = await axios.request(options);
+    let data;
+    axios.request(options).then(response => {
+        data = response.data.data[0];
+    }).catch(error => {
+        console.log('error')
+        return;
+    });
     // setTimeout(() => {console.log(data)}, 3000);
     return {
         props: { data }
