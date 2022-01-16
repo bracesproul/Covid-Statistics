@@ -14,3 +14,23 @@ a {
 * {
   box-sizing: border-box;
 }
+
+
+.HeaderBar {
+  display: inline-flex;
+  padding: 10px;
+  margin: 10px;
+}
+
+.HeaderItem {
+  margin-left: 10px;
+  margin-right: 10px;
+  font-weight: normal;
+  text-decoration: overline;
+}
+
+.HeaderItem:hover {
+  position: relative; 
+  top: -1px;
+  font-weight: bold;
+}
