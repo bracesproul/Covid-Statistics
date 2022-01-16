@@ -1,20 +1,72 @@
+import { useRouter } from 'next/router'
+const axios = require('axios');
+
 export default function Home() {
+    const router = useRouter()
+    if (router.isFallback) {
+        return <div>Loading...</div>
+      }
+
     return (
         <div>
             <h1>Covid Stats</h1>
-            <h3>This page will display the broken down stats and more in depth stats for each country, with the ability to change the date, if us you can change the state and possibly city. </h3>
-            <p>Data shown will comprise of</p>
-            <p>date: '2022-01-14',</p>
-            <p>confirmed: NUMBER,</p>
-            <p>deaths: NUMBER,</p>
-            <p>recovered: NUMBER,</p>
-            <p>confirmed_diff: NUMBER,</p>
-            <p>deaths_diff: NUMBER,</p>
-            <p>recovered_diff: NUMBER,</p>
-            <p>last_update: '2022-01-15 04:21:07',</p>
-            <p>active: NUMBER,</p>
-            <p>active_diff: NUMBER,</p>
-            <p>fatality_rate: NUMBER,</p>
+            <h3>This page will display the broken down and more in depth stats for each country, with the ability to change the date, if US you can change the state and possibly city. </h3>
+            <CountryData />
         </div>
+    )
+}
+
+export const getStaticPaths = async () => {
+    const options = {
+        method: 'GET',
+        url: 'https://covid-19-statistics.p.rapidapi.com/regions',
+        headers: {
+          'x-rapidapi-host': 'covid-19-statistics.p.rapidapi.com',
+          'x-rapidapi-key': '0a0ac6083dmshd4b9d1a80ab8e97p1c323ejsn671ecebffd29'
+        }
+    };
+    const result = await axios.request(options);
+    const data = result.data.data;
+    const paths = data.map(item => ({
+        params: { id: item.iso }
+    }));
+
+    return { paths, fallback: false }
+}
+
+export const getStaticProps = async ({ params }) => {
+    const id = params.id;
+    const options = {
+        method: 'GET',
+        url: 'https://covid-19-statistics.p.rapidapi.com/reports',
+        params: {
+            iso: id,
+            date: '2022-01-14'
+        },
+        headers: {
+            'x-rapidapi-host': 'covid-19-statistics.p.rapidapi.com',
+            'x-rapidapi-key': "0a0ac6083dmshd4b9d1a80ab8e97p1c323ejsn671ecebffd29"
+        }
+    };
+    const result = await axios.request(options);
+    const data = result.data.data[0];
+    // setTimeout(() => {console.log(data)}, 3000);
+    return {
+        props: { data }
+    }
+}
+
+const CountryData = ({ data }) => {
+    // console.log(data)
+    const router = useRouter()
+    const query = router.query.id;
+    // console.log(router.query);
+
+
+    return (
+        <>
+            <p>Route: {query}</p>
+            <p>Country: </p>
+        </>
     )
 }
