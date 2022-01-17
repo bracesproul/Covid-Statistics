@@ -1,8 +1,9 @@
 import { useRouter } from 'next/router'
 import axios from 'axios';
 import { HeaderBar } from './components/header';
+import { getDate } from './index.js';
 
-export default function Home() {
+export default function Home({ dataStructure }) {
     const router = useRouter()
     if (router.isFallback) {
         return <div>Loading...</div>
@@ -12,8 +13,7 @@ export default function Home() {
         <div>
             <HeaderBar />
             <h1>Covid Stats</h1>
-            <h3>This page will display the broken down and more in depth stats for each country, with the ability to change the date, if US you can change the state and possibly city. </h3>
-            <CountryData />
+            <CountryData data={dataStructure} />
         </div>
     )
 }
@@ -24,7 +24,7 @@ export const getStaticPaths = async () => {
         url: 'https://covid-19-statistics.p.rapidapi.com/regions',
         headers: {
           'x-rapidapi-host': 'covid-19-statistics.p.rapidapi.com',
-          'x-rapidapi-key': '0a0ac6083dmshd4b9d1a80ab8e97p1c323ejsn671ecebffd29'
+          'x-rapidapi-key': process.env.RAPID_API_KEY
         }
     };
     const result = await axios.request(options);
@@ -38,45 +38,107 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async ({ params }) => {
     const id = params.id;
-    let dataOthers = { "null": "null" };
-    if ( id === "Others" || "cruise" ) return { props: { dataOthers } }
+    // let dataOthers = { "null": "null" };
+    // if ( id === "Others" || "cruise" ) return { props: { dataOthers } }
     const options = {
         method: 'GET',
         url: 'https://covid-19-statistics.p.rapidapi.com/reports',
         params: {
             iso: id,
-            date: '2022-01-14'
+            date: getDate()
         },
         headers: {
             'x-rapidapi-host': 'covid-19-statistics.p.rapidapi.com',
-            'x-rapidapi-key': "0a0ac6083dmshd4b9d1a80ab8e97p1c323ejsn671ecebffd29"
+            'x-rapidapi-key': process.env.RAPID_API_KEY
         }
     };
-    //const result = await axios.request(options);
-    let data;
-    axios.request(options).then(response => {
-        data = response.data.data[0];
-    }).catch(error => {
-        console.log('error')
-        return;
+
+    let dataStructure = {
+        "country_name": "",
+        "iso": "",
+        "cases": 0,
+        "deaths": 0,
+        "recovered": 0,
+        "active": 0,
+        "fatality_rate": 0,
+        "date": 0,
+        "last_update": 0
+    }
+    let result;
+    let dataV;
+
+    await axios.request(options)
+    .then(response => {
+        result = response.data.data;
+        dataV = response.data.data[0];
+    })
+    .catch((err) => {
+        console.log(err);
     });
-    // setTimeout(() => {console.log(data)}, 3000);
+    // const dataFromResult = result.data;
+    // console.log(dataFromResult)
+    //const dataV = result.data.data[0];
+
+    await Promise.all(result.map(async (item, index) => {
+        let region;
+
+        if (dataV?.region === undefined) {
+            region = item.name;
+        } else {
+            region = dataV.region;
+        }
+        if (dataV === undefined) return;
+
+        dataStructure = {
+            "country_name": item.name,
+            "cases": item.confirmed + dataStructure.cases,
+            "deaths": item.deaths + dataStructure.deaths,
+            "recovered": item.recovered + dataStructure.recovered,
+            "active": item.active + dataStructure.active,
+            "date": item.date,
+            "last_update": item.last_update,
+            "fatality_rate": (dataStructure.deaths / dataStructure.cases) * 100,
+            "country_name": dataV.region.name,
+            "iso": dataV.region.iso
+        }
+    }))
+    .then(() => {
+        dataStructure = [
+            {...dataStructure}
+        ]
+        // console.log(dataStructure);
+    });
+
     return {
-        props: { data }
+        props: { dataStructure }
     }
 }
 
+
 const CountryData = ({ data }) => {
-    // console.log(data)
-    const router = useRouter()
-    const query = router.query.id;
-    // console.log(router.query);
-
-
+    let covidData = data[0];
+    const addComma = (x) => {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    /*const fatalityChecker = (x) => {
+        let rate = x;
+        console.log('rate', rate);
+        if (x < 1.0) {
+            let stringRate = [rate.toString()];
+            stringRate.splice(stringRate.indexOf("."))
+            rate = rate.toFixed(2);
+        }
+        return rate;
+    } */
     return (
         <>
-            <p>Route: {query}</p>
-            <p>Country: </p>
+            <div>
+                <p>Country: {covidData.country_name}</p>
+                <p>Cases: {addComma(covidData.cases)}</p>
+                <p>Deaths: {addComma(covidData.deaths)}</p>
+                <p>Fatality Rate: {(covidData.deaths / covidData.cases) * 100}</p>
+                <p>Date: {covidData.date}</p>
+            </div>
         </>
     )
 }
