@@ -2,6 +2,21 @@ import styles from '../styles/Home.module.css';
 import Link from 'next/link'
 import { HeaderBar } from './components/header';
 import axios from 'axios';
+import { getAnalytics, logEvent } from "firebase/analytics";
+import { initializeApp } from 'firebase/app';
+
+const firebaseConfig = {
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: "project-id.firebaseapp.com",
+    databaseURL: "https://project-id.firebaseio.com",
+    projectId: "project-id",
+    storageBucket: "project-id.appspot.com",
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_APP_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID
+};
+const app = initializeApp(firebaseConfig);
+//const analytics = getAnalytics();
 
 export default function Home({ data }) {
   return (
@@ -12,7 +27,7 @@ export default function Home({ data }) {
   )
 }
 
-const getDate = () => {
+export const getDate = () => {
     const date = new Date();
     const year = date.getFullYear();
     const day = () => {
@@ -39,7 +54,7 @@ export const getStaticProps = async () => {
         url: 'https://covid-19-statistics.p.rapidapi.com/regions',
         headers: {
             'x-rapidapi-host': 'covid-19-statistics.p.rapidapi.com',
-            'x-rapidapi-key': "0a0ac6083dmshd4b9d1a80ab8e97p1c323ejsn671ecebffd29"
+            'x-rapidapi-key': process.env.RAPID_API_KEY
         }
     };
     const result = await axios.request(options);
@@ -47,10 +62,6 @@ export const getStaticProps = async () => {
     let data = [];
 
     await Promise.all(dataFromResult.map(async (item, index) => {
-        if (item.iso === 'Others' || 'cruise') {
-            //console.log('found')
-            //return;
-        }
         const options = {
             method: 'GET',
             url: 'https://covid-19-statistics.p.rapidapi.com/reports',
@@ -61,12 +72,10 @@ export const getStaticProps = async () => {
             },
             headers: {
             'x-rapidapi-host': 'covid-19-statistics.p.rapidapi.com',
-            'x-rapidapi-key': "0a0ac6083dmshd4b9d1a80ab8e97p1c323ejsn671ecebffd29"
+            'x-rapidapi-key': process.env.RAPID_API_KEY
             }
         };
 
-        //const result = await axios.request(options);
-        //const dataV = result.data.data;
         let dataV;
         await axios.request(options).then(response => {
             dataV = response.data.data;
@@ -75,10 +84,9 @@ export const getStaticProps = async () => {
             return;
         });
 
-
         let region;
 
-        if (dataV[0]?.region === undefined) {
+        if ((dataV[0]?.region === undefined) || (dataV?.region === undefined)) {
         region = item.name;
         } else {
         region = dataV[0].region;
