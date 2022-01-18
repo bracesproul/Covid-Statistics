@@ -85,8 +85,9 @@ export const getStaticProps = async () => {
         });
 
         let region;
-
-        if ((dataV[0]?.region === undefined) || (dataV?.region === undefined)) {
+        if (dataV === undefined) region = item.name;
+        if (dataV?.region === undefined) region = item.name;
+        if (dataV[0]?.region === undefined) {
         region = item.name;
         } else {
         region = dataV[0].region;
@@ -139,7 +140,8 @@ export const getStaticProps = async () => {
   return {
       props: { 
           data,
-      }
+      },
+      revalidate: 10800
   }
 
 }
@@ -158,7 +160,7 @@ function ActiveCases({ data }) {
                         <p>Country: {item.dataStructure.country_name} </p>
                         <p>Cases: {addComma(item.dataStructure.cases)}</p>
                         <p>Deaths: {addComma(item.dataStructure.deaths)}</p>
-                        <p>Data from {item.dataStructure.last_update}</p>
+                        <p>Data from {item.dataStructure.date}</p>
                         <p className={styles.LinkStyle}><Link href={{pathname: `/${item.dataStructure.iso}`}}>Get more data</Link></p>
                     </span>
                 )
