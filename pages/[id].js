@@ -110,7 +110,8 @@ export const getStaticProps = async ({ params }) => {
     });
 
     return {
-        props: { dataStructure }
+        props: { dataStructure },
+        revalidate: 86400
     }
 }
 
