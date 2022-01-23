@@ -63,7 +63,7 @@ export const getStaticProps = async () => {
             },
             headers: {
               'x-rapidapi-host': 'covid-19-statistics.p.rapidapi.com',
-              'x-rapidapi-key': '0a0ac6083dmshd4b9d1a80ab8e97p1c323ejsn671ecebffd29'
+              'x-rapidapi-key': process.env.RAPID_API_KEY
             }
         };
         await axios.request(options).then(response => {
