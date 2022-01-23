@@ -68,7 +68,7 @@ export const getStaticProps = async () => {
         };
         await axios.request(options)
         .then(response => {
-            console.log(response.data.data)
+            console.log(response)
             const data = response.data.data;
             const country_name = response.data.data[0].region.name;
             const date = response.data.data[0].date;
