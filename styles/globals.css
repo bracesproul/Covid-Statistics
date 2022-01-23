@@ -5,7 +5,8 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-}
+    background-image: linear-gradient(to right, rgb(53, 53, 53), rgb(33, 33, 33));
+  }
 
 a {
   color: inherit;
@@ -36,20 +37,6 @@ a {
   position: relative; 
   top: -1px;
   font-weight: bold;
-}
-
-.background-more-countries {
-  background-image: linear-gradient(to right, rgb(53, 53, 53), rgb(33, 33, 33));
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.background {
-  background-image: linear-gradient(to right, rgb(53, 53, 53), rgb(33, 33, 33));
-  width: 100%;
-  height: 100%;
-  position: fixed;
 }
 
 ::-webkit-scrollbar {
