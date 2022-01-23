@@ -25,7 +25,7 @@ a {
 }
 
 .HeaderItem {
-  color: white;
+  color: #b3b3bf;
   margin-left: 10px;
   margin-right: 10px;
   font-weight: normal;
@@ -38,6 +38,109 @@ a {
   font-weight: bold;
 }
 
-.Background {
+.background-more-countries {
   background-image: linear-gradient(to right, rgb(53, 53, 53), rgb(33, 33, 33));
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.background {
+  background-image: linear-gradient(to right, rgb(53, 53, 53), rgb(33, 33, 33));
+  width: 100%;
+  height: 100%;
+  position: fixed;
+}
+
+::-webkit-scrollbar {
+  overflow: scroll;
+  background: linear-gradient(to right, rgb(53, 53, 53), rgb(33, 33, 33));
+}
+
+.country-list {
+  text-align: center;
+}
+
+.country-list::-webkit-scrollbar {
+  overflow: scroll;
+}
+
+.link {
+  text-decoration: underline;
+  color: rgb(30, 94, 255);
+  font-weight: bold;
+}
+
+.titleStyle {
+  color: #b3b3bf;
+  font-weight: 900;
+  text-align: center;
+  font-size: 40px;
+}
+
+.contentTitle {
+  color: #b3b3bf;
+  font-weight: 700;
+  font-size: 35px;
+}
+
+.searchBox {
+  border-radius: 8px;
+  padding: 5px;
+  margin: 3px 0;
+  margin-right: 3px;
+  margin-left: 3px;
+  border: 1px;
+  color: black;
+}
+
+.searchBox:focus {
+  font-weight: bold;
+}
+
+.searchLabel {
+  color: #b3b3bf;
+  font-weight: 500;
+  margin: 10px;
+  font-size: 25px;
+}
+
+.card {
+  height: 350px;
+  width: 400px;
+  min-width: 250px;
+  padding: 1.5rem;
+  border-radius: 16px;
+  background: #17141d;
+  box-shadow: -1rem 0 3rem #000;
+  margin: 0;
+  text-align: center;
+  color: #b3b3bf;
+}
+
+.deaths {
+  color: #ff5757;
+}
+
+.cases {
+  color: #ffd700;
+}
+
+.country-title {
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text {
+  color: #b3b3bf;
+}
+
+.Credits {
+  text-align: center;
 }
