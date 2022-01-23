@@ -69,10 +69,22 @@ export const getStaticProps = async () => {
         await axios.request(options)
         .then(response => {
             console.log(response)
+            if (!response.data) {
+                console.log('no data - .data')
+                return;
+            } 
+            if (!response.data.data) {
+                console.log('no data - data.data')
+                return;
+            }
+            if (response.data.data.length == 0 ) {
+                console.log('no data - length 0');
+                return;
+            }
             const data = response.data.data;
-            const country_name = response.data.data[0].region.name;
-            const date = response.data.data[0].date;
-            const iso = response.data.data[0].region.iso;
+            const country_name = data[0].region.name;
+            const date = data[0].date;
+            const iso = data[0].region.iso;
             let cases = 0;
             let deaths = 0;
             data.map(item => {
