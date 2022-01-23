@@ -10,10 +10,11 @@ export default function Home({ dataStructure }) {
       }
 
     return (
-        <div>
+        <div className="background">
             <HeaderBar />
-            <h1>Covid Stats</h1>
-            <CountryData data={dataStructure} />
+            <div className="card-container">
+                <CountryData data={dataStructure} />
+            </div>
         </div>
     )
 }
@@ -111,7 +112,7 @@ export const getStaticProps = async ({ params }) => {
 
     return {
         props: { dataStructure },
-        revalidate: 10800
+        revalidate: 43200
     }
 }
 
@@ -121,25 +122,13 @@ const CountryData = ({ data }) => {
     const addComma = (x) => {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
-    /*const fatalityChecker = (x) => {
-        let rate = x;
-        console.log('rate', rate);
-        if (x < 1.0) {
-            let stringRate = [rate.toString()];
-            stringRate.splice(stringRate.indexOf("."))
-            rate = rate.toFixed(2);
-        }
-        return rate;
-    } */
     return (
-        <>
-            <div>
-                <p>Country: {covidData.country_name}</p>
-                <p>Cases: {addComma(covidData.cases)}</p>
-                <p>Deaths: {addComma(covidData.deaths)}</p>
-                <p>Fatality Rate: {(covidData.deaths / covidData.cases) * 100}</p>
-                <p>Date: {covidData.date}</p>
-            </div>
-        </>
+        <article className="card">
+            <p className="country-title">{covidData.country_name}</p>
+            <p>Cases: <strong className="cases">{addComma(covidData.cases)}</strong></p>
+            <p>Deaths: <strong className="deaths">{addComma(covidData.deaths)}</strong></p>
+            <p>Fatality Rate: <strong>{(covidData.deaths / covidData.cases) * 100}</strong></p>
+            <p>Last Update: <strong>{covidData.date}</strong></p>
+        </article>
     )
 }

@@ -20,7 +20,7 @@ const app = initializeApp(firebaseConfig);
 // 
 export default function Home({ data }) {
   return (
-    <div className="Background">
+    <div className="background">
         <HeaderBar />
         <ActiveCases data={data} />
     </div>
@@ -86,13 +86,13 @@ export const getStaticProps = async () => {
             })
         })
         .catch((error) => {
-            console.error("error");
+            console.error("error - ", error);
         });
         return countryData;
     })
     const returnedData = await Promise.all(promise1);
     const data = returnedData[0];
-    console.log(data)
+    // console.log(data)
 
     return {
         props: { data },

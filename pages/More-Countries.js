@@ -5,9 +5,8 @@ import { useState } from 'react';
 
 export default function Home({ data }) {
     return (
-        <div>
+        <div className="background-more-countries">
             <HeaderBar />
-            <h1>More Countries</h1>
             <AllCountries countryList={data}/>
         </div>
     )
@@ -68,15 +67,15 @@ const AllCountries = ({ countryList }) => {
 
     const filteredList = searchList.map((country, index) => {
         return (
-            <p key={index} className="link" ><Link href={{pathname: `/${country.name}`}}>{country.name}</Link></p>
+            <p key={index} className="link" ><Link href={{pathname: `/${country.iso}`}}>{country.name}</Link></p>
         )
     })
 
     return (
-        <div>
-            <h1>Countries</h1>
-            <label>Search</label>
-            <input type="search" id="search" onChange={e => handleSearchInput(e)} />
+        <div className="country-list">
+            <h1 className="contentTitle" >Countries</h1>
+            <label className="searchLabel">Search</label> <br />
+            <input className="searchBox" type="search" id="search" onChange={e => handleSearchInput(e)} />
             <div className="country-list">
                 {search.length > 0 ? filteredList : fullList}
             </div>
