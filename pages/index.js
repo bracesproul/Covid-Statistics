@@ -66,11 +66,13 @@ export const getStaticProps = async () => {
               'x-rapidapi-key': process.env.RAPID_API_KEY
             }
         };
-        await axios.request(options).then(response => {
+        await axios.request(options)
+        .then(response => {
+            console.log(response.data.data)
             const data = response.data.data;
-            const country_name = data[0].region.name;
-            const date = data[0].date;
-            const iso = data[0].region.iso;
+            const country_name = response.data.data[0].region.name;
+            const date = response.data.data[0].date;
+            const iso = response.data.data[0].region.iso;
             let cases = 0;
             let deaths = 0;
             data.map(item => {
@@ -92,7 +94,6 @@ export const getStaticProps = async () => {
     })
     const returnedData = await Promise.all(promise1);
     const data = returnedData[0];
-    // console.log(data)
 
     return {
         props: { data },
