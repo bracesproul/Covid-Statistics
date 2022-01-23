@@ -17,12 +17,12 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 //const analytics = getAnalytics();
-
+// 
 export default function Home({ data }) {
   return (
-    <div className={styles.Home}>
-      <HeaderBar />
-      <ActiveCases data={data} />
+    <div className="Background">
+        <HeaderBar />
+        <ActiveCases data={data} />
     </div>
   )
 }
@@ -47,126 +47,85 @@ export const getDate = () => {
     return `${year}-${month()}-${day()}`
 }
 
-export const getStaticProps = async () => {
-    const dateForOptions = getDate();
-    const options = {
-        method: 'GET',
-        url: 'https://covid-19-statistics.p.rapidapi.com/regions',
-        headers: {
-            'x-rapidapi-host': 'covid-19-statistics.p.rapidapi.com',
-            'x-rapidapi-key': process.env.RAPID_API_KEY
-        }
-    };
-    const result = await axios.request(options);
-    const dataFromResult = result.data.data;
-    let data = [];
 
-    await Promise.all(dataFromResult.map(async (item, index) => {
+export const getStaticProps = async () => {
+    const popularCountries = ["Netherlands", "Poland", "Canada", "Portugal", "Russia", "Malaysia", "Switzerland", "Greece", "Austria", "Japan", "United Kingdom", "Thailand", "Germany", "Mexico", "Turkey", "Italy", "China", "US", "Spain", "France"]
+    let countryData = [];
+    let dataV = [];
+    const date = getDate();
+    const promise1 = popularCountries.map(async country => {
         const options = {
             method: 'GET',
             url: 'https://covid-19-statistics.p.rapidapi.com/reports',
             params: {
-            iso: item.iso,
-            region_name: item.name,
-            date: dateForOptions
+              region_name: country,
+              date: date
             },
             headers: {
-            'x-rapidapi-host': 'covid-19-statistics.p.rapidapi.com',
-            'x-rapidapi-key': process.env.RAPID_API_KEY
+              'x-rapidapi-host': 'covid-19-statistics.p.rapidapi.com',
+              'x-rapidapi-key': '0a0ac6083dmshd4b9d1a80ab8e97p1c323ejsn671ecebffd29'
             }
         };
-
-        let dataV;
         await axios.request(options).then(response => {
-            dataV = response.data.data;
-        }).catch(error => {
-            console.log('error')
-            return;
-        });
-
-        let region;
-        if (dataV === undefined) region = item.name;
-        if (dataV?.region === undefined) region = item.name;
-        if (dataV[0]?.region === undefined) {
-        region = item.name;
-        } else {
-        region = dataV[0].region;
-        }
-
-        if (dataV[0] === undefined) return;
-
-        let confirmed = { "confirmed": 0 };
-        let deaths = { "deaths": 0 };
-        let recovered = { "recovered": 0 };
-        let active = { "active": 0 };
-        let fatality_rate;
-
-        dataV.map(item => {
-            confirmed = { "confirmed": item.confirmed + confirmed.confirmed }
-            deaths = { "deaths": item.deaths + deaths.deaths }
-            recovered = { "recovered": item.recovered + recovered.recovered }
-            active = { "active": item.active + active.active }
-            const getFatalityRate = () => {
-                let rateV = (deaths.deaths / confirmed.confirmed) * 100;
-                const rate = { "fatality_rate": rateV }
-                return rate;
-            }
-            fatality_rate = getFatalityRate();
+            const data = response.data.data;
+            const country_name = data[0].region.name;
+            const date = data[0].date;
+            const iso = data[0].region.iso;
+            let cases = 0;
+            let deaths = 0;
+            data.map(item => {
+                cases += item.confirmed;
+                deaths += item.deaths;
+            })
+            countryData.push({
+                "country_name": country_name,
+                "date": date,
+                "cases": cases,
+                "deaths": deaths,
+                "iso": iso
+            })
         })
+        .catch((error) => {
+            console.error("error");
+        });
+        return countryData;
+    })
+    const returnedData = await Promise.all(promise1);
+    const data = returnedData[0];
+    console.log(data)
 
-        const dataStructure = {
-        "country_name": item.name,
-        "cases": confirmed.confirmed,
-        "deaths": deaths.deaths,
-        "recovered": recovered.recovered,
-        "active": active.active,
-        "fatality_rate": fatality_rate.fatality_rate,
-        "date": dataV[0].date,
-        "last_update": dataV[0].last_update,
-        "region": region,
-        "iso": item.iso
-        }
-        
-        /* console.log(`Country: ${dataStructure.country_name}
-    Confirmed: ${dataStructure.cases}
-    `); */
-
-        data = [
-        ...data,
-        { dataStructure }
-        ]
-    }));
-
-  return {
-      props: { 
-          data,
-      },
-      revalidate: 10800
-  }
-
+    return {
+        props: { data },
+        revalidate: 43200
+    }
 }
 
 function ActiveCases({ data }) {
     const addComma = (x) => {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
-  return (
+    return (
       <div>
           <h1 className={styles.Header}>Active Cases</h1>
-          <div>
+          <section className={styles.cardList2}>
             { data.map((item, index) => {
                 return (
-                    <span className={styles.DataWrapper} key={index}>
-                        <p>Country: {item.dataStructure.country_name} </p>
-                        <p>Cases: {addComma(item.dataStructure.cases)}</p>
-                        <p>Deaths: {addComma(item.dataStructure.deaths)}</p>
-                        <p>Data from {item.dataStructure.date}</p>
-                        <p className={styles.LinkStyle}><Link href={{pathname: `/${item.dataStructure.iso}`}}>Get more data</Link></p>
-                    </span>
+                    <article className={styles.Card2} key={index}>
+                        <header>
+                            <p><strong>{item.country_name}</strong></p>
+                            <p>Cases: <strong className={styles.cases}>{addComma(item.cases)}</strong></p>
+                            <p>Deaths: <strong className={styles.deaths}>{addComma(item.deaths)}</strong></p>
+                            <p><strong>{item.date}</strong></p>
+                            <p style={{ textDecoration: "underline" }} className={styles.LinkStyle}><Link href={{pathname: `/${item.iso}`}}>Get more data</Link></p>
+                        </header>
+                    </article>
                 )
             }) }
-          </div>
+          </section>
       </div>
   )
 }
+
+
+
 
