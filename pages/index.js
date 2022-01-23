@@ -27,8 +27,10 @@ export default function Home({ data }) {
   )
 }
 
-export const getDate = () => {
-    const date = new Date();
+export const getDateForRequest = () => {
+    const currentDate = new Date();
+    const date = new Date(currentDate - (5 * 60 * 60 * 1000));
+    console.log('date -', date)
     const year = date.getFullYear();
     const day = () => {
         if (date.getDate().toString() === "1" && month - 1 === (2 || 4 || 6 || 9 || 11)) {
@@ -52,7 +54,7 @@ export const getStaticProps = async () => {
     const popularCountries = ["Netherlands", "Poland", "Canada", "Portugal", "Russia", "Malaysia", "Switzerland", "Greece", "Austria", "Japan", "United Kingdom", "Thailand", "Germany", "Mexico", "Turkey", "Italy", "China", "US", "Spain", "France"]
     let countryData = [];
     let dataV = [];
-    const date = getDate();
+    const date = getDateForRequest();
     const promise1 = popularCountries.map(async country => {
         const options = {
             method: 'GET',
@@ -68,7 +70,6 @@ export const getStaticProps = async () => {
         };
         await axios.request(options)
         .then(response => {
-            console.log(response)
             if (!response.data) {
                 console.log('no data - .data')
                 return;

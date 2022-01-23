@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import axios from 'axios';
 import { HeaderBar } from './components/header';
-import { getDate } from './index.js';
+import { getDateForRequest } from './index.js';
 
 export default function Home({ dataStructure }) {
     const router = useRouter()
@@ -46,7 +46,7 @@ export const getStaticProps = async ({ params }) => {
         url: 'https://covid-19-statistics.p.rapidapi.com/reports',
         params: {
             iso: id,
-            date: getDate()
+            date: getDateForRequest()
         },
         headers: {
             'x-rapidapi-host': 'covid-19-statistics.p.rapidapi.com',

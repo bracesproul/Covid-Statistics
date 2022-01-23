@@ -25,7 +25,7 @@ or you may search by name.
  
  
 ## Technical Details
-Since this is a Next.JS app, the data is first fetched using the `getStaticProps()` function. This function is called when the page is first loaded to fetch the data. It then returns the fetched data as an array of objects which is passed as a prop to the component which renders the homepage text. For the "More Data" pages the link is first parsed by the `getStaticPaths()` function which parses the URL to get the country's unique identifier. This identifier is then returned and another `getStaticProps()` function is called which uses that ID to fetch the countries data. The date is determined by the `getDate()` function which pulls today's date, goes back one day and then returns that date (this is because the API's most recent data is only available for the previous day).
+Since this is a Next.JS app, the data is first fetched using the `getStaticProps()` function. This function is called when the page is first loaded to fetch the data. It then returns the fetched data as an array of objects which is passed as a prop to the component which renders the homepage text. For the "More Data" pages the link is first parsed by the `getStaticPaths()` function which parses the URL to get the country's unique identifier. This identifier is then returned and another `getStaticProps()` function is called which uses that ID to fetch the countries data. The date is determined by the `getDateForRequest()` function which pulls today's date, goes back one day and then returns that date (this is because the API's most recent data is only available for the previous day).
  
  
 ## Credits
