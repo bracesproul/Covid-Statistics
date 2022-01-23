@@ -1,0 +1,95 @@
+getStaticProps function for requesting data on all countries to populate homepage
+export const getStaticProps = async () => {
+    const dateForOptions = getDate();
+    const options = {
+        method: 'GET',
+        url: 'https://covid-19-statistics.p.rapidapi.com/regions',
+        headers: {
+            'x-rapidapi-host': 'covid-19-statistics.p.rapidapi.com',
+            'x-rapidapi-key': process.env.RAPID_API_KEY
+        }
+    };
+    const result = await axios.request(options);
+    const dataFromResult = result.data.data;
+    let data = [];
+
+    await Promise.all(dataFromResult.map(async (item, index) => {
+        const options = {
+            method: 'GET',
+            url: 'https://covid-19-statistics.p.rapidapi.com/reports',
+            params: {
+            iso: item.iso,
+            region_name: item.name,
+            date: dateForOptions
+            },
+            headers: {
+            'x-rapidapi-host': 'covid-19-statistics.p.rapidapi.com',
+            'x-rapidapi-key': process.env.RAPID_API_KEY
+            }
+        };
+
+        let dataV;
+        await axios.request(options).then(response => {
+            dataV = response.data.data;
+        }).catch(error => {
+            console.log('error')
+            return;
+        });
+
+        let region;
+        if (dataV === undefined) region = item.name;
+        if (dataV?.region === undefined) region = item.name;
+        if (dataV[0]?.region === undefined) {
+        region = item.name;
+        } else {
+        region = dataV[0].region;
+        }
+
+        if (dataV[0] === undefined) return;
+
+        let confirmed = { "confirmed": 0 };
+        let deaths = { "deaths": 0 };
+        let recovered = { "recovered": 0 };
+        let active = { "active": 0 };
+        let fatality_rate;
+
+        dataV.map(item => {
+            confirmed = { "confirmed": item.confirmed + confirmed.confirmed }
+            deaths = { "deaths": item.deaths + deaths.deaths }
+            recovered = { "recovered": item.recovered + recovered.recovered }
+            active = { "active": item.active + active.active }
+            const getFatalityRate = () => {
+                let rateV = (deaths.deaths / confirmed.confirmed) * 100;
+                const rate = { "fatality_rate": rateV }
+                return rate;
+            }
+            fatality_rate = getFatalityRate();
+        })
+
+        const dataStructure = {
+        "country_name": item.name,
+        "cases": confirmed.confirmed,
+        "deaths": deaths.deaths,
+        "recovered": recovered.recovered,
+        "active": active.active,
+        "fatality_rate": fatality_rate.fatality_rate,
+        "date": dataV[0].date,
+        "last_update": dataV[0].last_update,
+        "region": region,
+        "iso": item.iso
+        }
+
+        data = [
+        ...data,
+        { dataStructure }
+        ]
+    }));
+
+  return {
+      props: { 
+          data,
+      },
+      revalidate: 86400
+  }
+
+}
