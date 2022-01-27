@@ -56,7 +56,7 @@ const AllCountries = ({ countryList }) => {
                 setSearchList(searchListTemp);
             }
         }
-        console.log(searchList);
+        // console.log(searchList);
     }
 
     const fullList = countryList.map((country, index) => {

@@ -1,20 +1,24 @@
 import { useRouter } from 'next/router'
 import axios from 'axios';
 import { HeaderBar } from './components/header';
+import { readData } from './components/readDataHistory';
 import { getDateForRequest } from './index.js';
+import { AreaChart, XAxis, YAxis, Tooltip, Area, ResponsiveContainer } from 'recharts';
+
 
 export default function Home({ dataStructure }) {
     const router = useRouter()
     if (router.isFallback) {
         return <div>Loading...</div>
-      }
-
+    }
+    const dataHistory = readData(router.query.id);
     return (
         <div className="background">
             <HeaderBar />
             <div className="card-container">
                 <CountryData data={dataStructure} />
             </div>
+            <TestChart dataHistory={dataHistory} />
         </div>
     )
 }
@@ -127,8 +131,73 @@ const CountryData = ({ data }) => {
             <p className="country-title">{covidData.country_name}</p>
             <p>Cases: <strong className="cases">{addComma(covidData.cases)}</strong></p>
             <p>Deaths: <strong className="deaths">{addComma(covidData.deaths)}</strong></p>
-            <p>Fatality Rate: <strong>{(covidData.deaths / covidData.cases) * 100}</strong></p>
+            <p>Fatality Rate: <strong>{(covidData.deaths / covidData.cases) * 100}%</strong></p>
             <p>Last Update: <strong>{covidData.date}</strong></p>
         </article>
+    )
+}
+
+const TestChart = ({ dataHistory }) => {
+    //const dataToBeUsed = dataHistory.map(item => {
+        //if (item.date_number > 20220101){
+            //console.log(item.date)
+            //return item
+        //}
+    //})
+
+    if (!dataHistory) return <div>No Data</div>
+
+    const data = dataHistory.map(it => {
+        let new_cases = Number(it.new_cases)
+        let new_deaths = Number(it.new_deaths)
+        let total_cases = Number(it.total_cases)
+        let total_deaths = Number(it.total_deaths)
+        const dateNum = Number(it.date_number);
+
+        const deathsArr = it.new_deaths.split(',');
+        const casesArr = it.new_cases.split(',');
+
+        if (deathsArr[0].includes('-')) {
+            new_deaths = 0;
+        };
+        if (casesArr[0].includes('-')) {
+            new_cases = 0;
+        };
+        return {
+            new_cases: new_cases,
+            new_deaths: new_deaths,
+            total_cases: total_cases,
+            total_deaths: total_deaths,
+            date: it.date,
+            date_number: dateNum
+        }
+    }) 
+    return (
+        <div className="charts-container">
+            <div className="chart">
+            <h1 className="country-title">Cases</h1>
+            <ResponsiveContainer width={800} height={325}>
+                <AreaChart data={data}
+                margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip dataKey="date" />
+                <Area type="monotone" dataKey="new_cases" stroke="#8884d8" fill="#8884d8" />
+                </AreaChart>
+            </ResponsiveContainer>
+            </div>
+            <div className="chart">
+            <h1 className="country-title">Deaths</h1>
+            <ResponsiveContainer width={800} height={325}>
+                <AreaChart data={data}
+                margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip dataKey="date" />
+                <Area type="monotone" dataKey="new_deaths" stroke="#8884d8" fill="#8884d8" />
+                </AreaChart>
+            </ResponsiveContainer>
+            </div>
+        </div>
     )
 }

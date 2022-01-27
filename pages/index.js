@@ -30,7 +30,7 @@ export default function Home({ data }) {
 export const getDateForRequest = () => {
     const currentDate = new Date();
     const date = new Date(currentDate - (5 * 60 * 60 * 1000));
-    console.log('date -', date)
+    // console.log('date -', date)
     const year = date.getFullYear();
     const day = () => {
         if (date.getDate().toString() === "1" && month - 1 === (2 || 4 || 6 || 9 || 11)) {
@@ -141,5 +141,14 @@ function ActiveCases({ data }) {
 }
 
 
-
+const About = () => {
+    return (
+        <div>
+            <h1>About this site</h1>
+            <p>This site was developed to give users a seamless and interactive way to view COVID-19 data from 200+ countries around the world. 
+                It updates twice a day and always has reliable data, as it's being pulled from Johns Hopkins. 
+            </p>
+        </div>
+    )
+}
 
