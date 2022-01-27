@@ -116,6 +116,7 @@ a {
 .country-title {
   font-size: 25px;
   font-weight: 600;
+  color: #b3b3bf;
 }
 
 .card-container {
@@ -130,4 +131,54 @@ a {
 
 .Credits {
   text-align: center;
+}
+
+.chart-container {
+  display: flex;
+  margin: 3rem;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+  max-width: 825px;
+  max-height: 375px;
+}
+
+.chart {
+  border-radius: 16px;
+  background: #17141d;
+  box-shadow: -1rem 0 3rem #000;
+  justify-content: center;
+  align-items: baseline;
+  text-align: center;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  max-width: 850px;
+  margin: 2rem;
+}
+
+.chart-selection-container {
+  display: inline;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+
+.text-chart {
+  color: #b3b3bf;
+}
+
+.text-chart:hover {
+  cursor: pointer;
+}
+
+.background {
+  margin-bottom: 4rem;
+}
+
+.charts-container {
+  justify-content: center;
+  align-items: center;
+  display: flex;
 }
