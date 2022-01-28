@@ -8,6 +8,7 @@
 # testing
 /coverage
 testing.js
+hidden.js
 
 # next.js
 /.next/
@@ -34,3 +35,4 @@ yarn-error.log*
 
 # vercel
 .vercel
+

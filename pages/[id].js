@@ -175,7 +175,7 @@ const TestChart = ({ dataHistory }) => {
     return (
         <div className="charts-container">
             <div className="chart">
-            <h1 className="country-title">Cases</h1>
+            <h1 className="country-title">Cases*</h1>
             <ResponsiveContainer width={800} height={325}>
                 <AreaChart data={data}
                 margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
@@ -187,7 +187,7 @@ const TestChart = ({ dataHistory }) => {
             </ResponsiveContainer>
             </div>
             <div className="chart">
-            <h1 className="country-title">Deaths</h1>
+            <h1 className="country-title">Deaths*</h1>
             <ResponsiveContainer width={800} height={325}>
                 <AreaChart data={data}
                 margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
@@ -198,6 +198,7 @@ const TestChart = ({ dataHistory }) => {
                 </AreaChart>
             </ResponsiveContainer>
             </div>
+            <p>*Data isn't fully up to date, most recent data displayed on graphs is from Jan 24th 2022.*</p>
         </div>
     )
 }

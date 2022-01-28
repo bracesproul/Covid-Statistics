@@ -1,6 +1,6 @@
 getStaticProps function for requesting data on all countries to populate homepage
 export const getStaticProps = async () => {
-    const dateForOptions = getDate();
+    const dateForOptions = getDateForRequest();
     const options = {
         method: 'GET',
         url: 'https://covid-19-statistics.p.rapidapi.com/regions',
