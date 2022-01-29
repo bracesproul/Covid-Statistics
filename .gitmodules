@@ -1,0 +1,3 @@
+[submodule "Web-scraper-for-COVID-19-statistics"]
+	path = Web-scraper-for-COVID-19-statistics
+	url = https://github.com/bracesproul/Web-scraper-for-COVID-19-statistics.git
