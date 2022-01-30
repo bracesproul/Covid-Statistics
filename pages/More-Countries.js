@@ -1,4 +1,4 @@
-import { HeaderBar } from './components/header.js';
+import { HeaderBar } from '../components/header.js';
 import axios from 'axios';
 import Link from 'next/link'
 import { useState } from 'react';
