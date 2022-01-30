@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import axios from 'axios';
-import { HeaderBar } from './components/header';
-import { readData } from './components/readDataHistory';
+import { HeaderBar } from '../components/header';
+import { readData } from '../components/readDataHistory';
 import { getDateForRequest } from './index.js';
 import { AreaChart, XAxis, YAxis, Tooltip, Area, ResponsiveContainer } from 'recharts';
 
