@@ -182,3 +182,37 @@ a {
   align-items: center;
   display: flex;
 }
+
+.sameLine {
+  display: inline;
+  color: #b3b3bf;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted #b3b3bf;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  background-color: #231f29;
+  color: #b3b3bf;
+  text-align: center;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 3px;
+  padding-right: 3px;
+  border-radius: 16px;
+  width: 200px;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  width: 200px;
+}

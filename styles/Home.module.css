@@ -19,19 +19,13 @@
 .cardList2 {
   display: flex;
   padding: 3rem;
-  overflow-x: hidden;
+  margin-left: 2rem;
+  margin-right: 2rem;
 }
-
-.cardList2:hover {
-  overflow-x: scroll;
-}
-
-
-
 
 .Card2 {
   height: 350px;
-  width: 400px;
+  width: auto;
   min-width: 250px;
   padding: 1.5rem;
   border-radius: 16px;
@@ -65,4 +59,8 @@
 
 .cases {
   color: #ffd700;
+}
+
+.recentUpdates {
+  color: #DCDCDC;
 }
