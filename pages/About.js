@@ -1,4 +1,4 @@
-import { HeaderBar } from './components/header.js';
+import { HeaderBar } from '../components/header.js';
 import Link from 'next/link'
 
 export default function Home() {
