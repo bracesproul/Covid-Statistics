@@ -93,24 +93,28 @@ a {
 }
 
 .card {
-  height: 350px;
-  width: 400px;
-  min-width: 250px;
+  height: auto;
+  width: auto;
+  min-width: 350px;
   padding: 1.5rem;
   border-radius: 16px;
   background: #17141d;
   box-shadow: -1rem 0 3rem #000;
-  margin: 0;
+  margin: 10px auto;
   text-align: center;
   color: #b3b3bf;
 }
 
 .deaths {
   color: #ff5757;
+  margin-top: 10px auto;
+  margin-bottom: 10px auto;
 }
 
 .cases {
   color: #ffd700;
+  margin-top: 10px auto;
+  margin-bottom: 10px auto;
 }
 
 .country-title {
@@ -192,6 +196,7 @@ a {
   position: relative;
   display: inline-block;
   border-bottom: 1px dotted #b3b3bf;
+  margin-bottom: 7px;
 }
 
 .tooltip .tooltiptext {
