@@ -32,7 +32,6 @@ export default function Home({ data }) {
 export const getDateForRequest = () => {
     const currentDate = new Date();
     const date = new Date(currentDate - (5 * 60 * 60 * 1000));
-    // console.log('date -', date)
     const year = date.getFullYear();
     const day = () => {
         if (date.getDate().toString() === "1" && month - 1 === (2 || 4 || 6 || 9 || 11)) {
@@ -84,9 +83,6 @@ export const getStaticProps = async () => {
             .then(res => {
                 res.data[0].total_cases.map(item => {
                     if (item.country === country) {
-                        // console.log(Object.keys(item)[1])
-                        // console.log(item.country)
-                        // console.log(item.total_cases)
                         dataV.push({[item.country]: {
                             country: item.country,
                             total_cases: item.total_cases,
@@ -108,15 +104,9 @@ export const getStaticProps = async () => {
             .then(res => {
                 res.data[1].total_deaths.map(item => {
                     if (item.country === country) {
-                        // console.log(Object.keys(item)[1])
-                        // console.log(item.country)
-                        // console.log(item.total_deaths)
                         dataV.map(data => {
                             if (data[country]) {
-                                // console.log('ITEM COUNTRY -', data[country].country)
-                                // console.log('ITEM total deaths -', data[country].total_deaths)
                                 data[country].total_deaths = item.total_deaths
-                                // console.log(data[country])
                             }
                         })
                     }
@@ -131,15 +121,9 @@ export const getStaticProps = async () => {
             .then(res => {
                 res.data[4].daily_cases.map(item => {
                     if (item.country === country) {
-                        // console.log(Object.keys(item)[1])
-                        // console.log(item.country)
-                        // console.log(item.daily_cases)
                         dataV.map(data => {
                             if (data[country]) {
-                                // console.log('ITEM COUNTRY -', data[country].country)
-                                // console.log('ITEM daily cases -', data[country].daily_cases)
                                 data[country].daily_cases = item.cases
-                                // console.log(data[country])
                             }
                         })
                     }
@@ -154,15 +138,9 @@ export const getStaticProps = async () => {
             .then(res => {
                 res.data[5].daily_deaths.map(item => {
                     if (item.country === country) {
-                        // console.log(Object.keys(item)[1])
-                        // console.log(item.country)
-                        // console.log(item.daily_deaths)
                         dataV.map(data => {
                             if (data[country]) {
-                                // console.log('ITEM COUNTRY -', data[country].country)
-                                // console.log('ITEM daily deaths -', data[country].daily_deaths)
                                 data[country].daily_deaths = item.deaths
-                                // console.log(data[country])
                             }
                         })
                     }
@@ -177,15 +155,9 @@ export const getStaticProps = async () => {
             .then(res => {
                 res.data[7].cumulative_fatality_rate.map(item => {
                     if (item.country === country) {
-                        // console.log(Object.keys(item)[1])
-                        // console.log(item.country)
-                        // console.log(item.cumulative_fatality_rate)
                         dataV.map(data => {
                             if (data[country]) {
-                                // console.log('ITEM COUNTRY -', data[country].country)
-                                // console.log('ITEM daily cases -', data[country].cumulative_fatality_rate)
                                 data[country].cumulative_fatality_rate = item.cumulative_fatality_rate
-                                // console.log(data[country])
                             }
                         })
                     }
@@ -199,7 +171,6 @@ export const getStaticProps = async () => {
         
     })
 
-    // console.log('REQUESTED DATA - ', await requestedData);
     const data = await requestedData;
 
     return {
@@ -209,7 +180,6 @@ export const getStaticProps = async () => {
 }
 
 function ActiveCases({ data }) {
-    // console.log('DATA - ', data);
     return (
         <div>
             <h1 className={styles.Header}>Active Cases</h1>
@@ -218,7 +188,30 @@ function ActiveCases({ data }) {
                 { data.map((item, index) => {
                 const countryKey = Object.keys(item)[0];
                 const dataToUse = item[countryKey];
-                
+                let fatalityRate = dataToUse.cumulative_fatality_rate;
+                let totalCases;
+                let totalDeaths;
+                // console.log(dataToUse);
+                if (fatalityRate === 0) {
+                    if (dataToUse.total_cases.includes('million')) {
+                        let totalCasesTemp = dataToUse.total_cases.split(' ')[0];
+                        totalCases = Number(totalCasesTemp) * 1000000;
+                    } else {
+                        let totalCasesTemp = dataToUse.total_cases.split(' ')[0];
+                        totalCases = Number(totalCasesTemp);
+                    }
+
+                    if (dataToUse.total_deaths.includes('million')) {
+                        let totalDeathsTemp1 = dataToUse.total_deaths.split(' ')[0];
+                        totalDeaths = Number(totalDeathsTemp1) * 1000000;
+                    } else {
+                        let totalDeathsTemp2 = dataToUse.total_deaths.split(' ')[0];
+                        totalDeaths = Number(totalDeathsTemp2.split(',').join(''));
+                    }
+
+                    fatalityRate = (totalDeaths / totalCases) * 100;
+                    fatalityRate = fatalityRate.toFixed(2) + '%';
+                }
                 return (
                 <article className={styles.Card2} key={index}>
                     <header>
@@ -227,7 +220,7 @@ function ActiveCases({ data }) {
                         {dataToUse.total_deaths[0].includes(', 2020') || dataToUse.total_deaths[0].includes(', 2021') || dataToUse.total_deaths[0].includes(', 2022') ? <OutDatedValue nameOfData="Total Deaths" data={dataToUse.total_deaths[1]} dataDate={dataToUse.total_deaths[0]} currentDate={currentDate()} /> : <p>Total Deaths: <strong className={styles.deaths}>{dataToUse.total_deaths}</strong></p>}
                         {dataToUse.daily_cases[0].includes(', 2020') || dataToUse.daily_cases[0].includes(', 2021') || dataToUse.daily_cases[0].includes(', 2022') ? <OutDatedValue nameOfData="New Cases" data={dataToUse.daily_cases[1]} dataDate={dataToUse.daily_cases[0]} currentDate={currentDate()} /> : <p>New Cases: <strong className={styles.cases}>{dataToUse.daily_cases}</strong></p>}
                         {dataToUse.daily_deaths[0].includes(', 2020') || dataToUse.daily_deaths[0].includes(', 2021') || dataToUse.daily_deaths[0].includes(', 2022') ? <OutDatedValue nameOfData="New Deaths" data={dataToUse.daily_deaths[1]} dataDate={dataToUse.daily_deaths[0]} currentDate={currentDate()} /> : <p>New Deaths: <strong className={styles.deaths}>{dataToUse.daily_deaths}</strong></p>}
-                        <p>Fatality Rate: <strong>{dataToUse.cumulative_fatality_rate}</strong></p>
+                        <p>Fatality Rate: <strong>{fatalityRate}</strong></p>
                         <p><strong>{item.date}</strong></p>
                         <p style={{ textDecoration: "underline" }} className={styles.LinkStyle}><Link href={{pathname: `/${dataToUse.iso}`}}>Get more data</Link></p>
                     </header>

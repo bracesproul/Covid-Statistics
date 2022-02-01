@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import history from './covid_data_history.json';
 
 export const HeaderBar = () => {
     return (
@@ -9,3 +10,17 @@ export const HeaderBar = () => {
       </div>
     )
 }
+
+export const findEuro = (country_name) => {
+  let toBeReturned;
+  history.map(d => {
+      const iso = Object.keys(d)[0]
+      
+      const country = d[iso][0].location;
+      if (country == country_name) {
+          toBeReturned = d[iso];
+      }
+  })
+  return toBeReturned;
+}
+

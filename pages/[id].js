@@ -1,20 +1,21 @@
 import { useRouter } from 'next/router'
 import axios from 'axios';
-import { HeaderBar } from '../components/header';
+import data_historyV from '../components/covid_data_history.json';
+import { HeaderBar, findEuro } from '../components/header';
 import { readData } from '../components/readDataHistory';
-import { OutDatedValue } from '../components/outDatedValue';
+import { OutDatedValue, OutdatedChart } from '../components/outDatedValue';
 import { currentDate } from '../components/dates';
 import { getDateForRequest } from './index.js';
 import { AreaChart, XAxis, YAxis, Tooltip, Area, ResponsiveContainer } from 'recharts';
 import iso_and_country_list from '../components/iso_and_country_list';
 import { useEffect, useState } from 'react';
-
-
+let globalQuerryId;
 export default function Home({ data }) {
     const router = useRouter()
     if (router.isFallback) {
         return <div>Loading...</div>
     }
+    globalQuerryId = router.query.id;
     const dataHistory = readData(router.query.id);
     return (
         <div className="background">
@@ -71,70 +72,60 @@ export const getStaticProps = async ({ params }) => {
                     }
                 })
 
-                // console.log(res.data[1]); // total_deaths
                 const total_deaths = await res.data[1].total_deaths.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].total_deaths = item.total_deaths;
                     }
                 })
                 
-                // console.log(res.data[2]); // total_hospitalized
                 const total_hospitalized = await res.data[2].total_hospitalized.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].total_hospitalized = item.current_hospitalized;
                     }
                 })
 
-                // console.log(res.data[3]); // total_icu
                 const total_icu = await res.data[3].total_icu.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].total_icu = item.current_icu;
                     }
                 })
 
-                // console.log(res.data[4]); // daily_cases
                 const daily_cases = await res.data[4].daily_cases.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].daily_cases = item.cases;
                     }
                 })
 
-                // console.log(res.data[5]); // daily_deaths
                 const daily_deaths = await res.data[5].daily_deaths.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].daily_deaths = item.deaths;
                     }
                 })
 
-                // console.log(res.data[6]); // fatality_rate_7_day_avg (broken)
                 const fatality_rate_7_day_avg = await res.data[6].fatality_rate_7_day_avg.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].fatality_rate_7_day_avg = item.death_rate_7;
                     }
                 })
 
-                // console.log(res.data[7]); // cumulative_fatality_rate
                 const cumulative_fatality_rate = await res.data[7].cumulative_fatality_rate.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].cumulative_fatality_rate = item.cumulative_fatality_rate;
                     }
                 })
 
-                // console.log(res.data[8]); // daily_tests
                 const daily_tests = await res.data[8].daily_tests.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].daily_tests = item.new_tests;
                     }
                 })
 
-                // console.log(res.data[9]); // vaccines_administered
                 const vaccines_administered = await res.data[9].vaccines_administered.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].vaccines_administered = item.vaccines_administered;
                     }
                 })
 
-                // console.log(res.data[10]); // fully_vaccinated_people
                 const fully_vaccinated_people = await res.data[10].fully_vaccinated_people.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].fully_vaccinated_people = item.people_fully_vaccinated;
@@ -146,7 +137,6 @@ export const getStaticProps = async ({ params }) => {
         }
         res(dataV);
     });
-    // console.log(await requestedData);
     const data = await requestedData;
     return {
         props: { data },
@@ -157,8 +147,8 @@ export const getStaticProps = async ({ params }) => {
 
 const CountryData = ({ data }) => {
     const returnedData = data.map(item => {
-        const country = Object.keys(item)[0];
-        return item[country]
+        const countryXYZ = Object.keys(item)[0];
+        return item[countryXYZ]
     });
 
     const dataToUse = returnedData[0];
@@ -182,7 +172,11 @@ const CountryData = ({ data }) => {
         
         return handler;
     }
-
+    if (!dataToUse.total_cases) {
+        console.log('No data for this country');
+        console.log("QUERRY -", globalQuerryId);
+        return null;
+    }
     return (
         <article className="card">
             <p className="country-title">{dataToUse.country}</p>
@@ -190,27 +184,27 @@ const CountryData = ({ data }) => {
                 <DataDisplayer title="Total Deaths" data={total_deaths} uiClass="deaths" />
                 <DataDisplayer title="New Cases" data={daily_cases} uiClass="cases" />
                 <DataDisplayer title="New Deaths" data={daily_deaths} uiClass="deaths" />
-                <DataDisplayer title="Hospitalized Patients" data={total_hospitalized} uiClass="deaths" />
-                <DataDisplayer title="ICU Patients" data={total_icu} uiClass="deaths" />
+                <DataDisplayer title="Hospitalized Patients" data={total_hospitalized} uiClass="fatality-rate" />
+                <DataDisplayer title="ICU Patients" data={total_icu} uiClass="fatality-rate" />
                 <DataDisplayer title="Cumulative Fatality Rate" data={cumulative_fatality_rate} uiClass="deaths" />
                 <DataDisplayer title="Fatality Rate (7 day avg)" data={fatality_rate_7_day_avg} uiClass="deaths" />
-                <DataDisplayer title="Fully Vaccinated Population" data={fully_vaccinated_people} uiClass="deaths" />
-                <DataDisplayer title="Vaccines Administered" data={vaccines_administered} uiClass="deaths" />
-                <DataDisplayer title="Daily Tests" data={daily_tests} uiClass="deaths" />
+                <DataDisplayer title="Fully Vaccinated Population" data={fully_vaccinated_people} uiClass="good-things" />
+                <DataDisplayer title="Vaccines Administered" data={vaccines_administered} uiClass="good-things" />
+                <DataDisplayer title="Daily Tests" data={daily_tests} uiClass="good-things" />
             
         </article>
     )
 }
 
-const TestChart = ({ dataHistory }) => {
-    //const dataToBeUsed = dataHistory.map(item => {
-        //if (item.date_number > 20220101){
-            //console.log(item.date)
-            //return item
-        //}
-    //})
 
-    if (!dataHistory) return <></>
+
+const TestChart = ({ dataHistory }) => {
+
+    if (!dataHistory) {
+        console.log("No chart data for this country");
+        console.log("QUERRY -", globalQuerryId);
+        return null;
+    }
 
     const data = dataHistory.map(it => {
         let new_cases = Number(it.new_cases)
@@ -263,7 +257,6 @@ const TestChart = ({ dataHistory }) => {
                 </AreaChart>
             </ResponsiveContainer>
             </div>
-            <p>*Data isn't fully up to date, most recent data displayed on graphs is from Jan 24th 2022.*</p>
         </div>
     )
 }
