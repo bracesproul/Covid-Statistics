@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import dataHistory from './covid_data_history.json'
 
-
+/*
 const TestChart = ({ dataHistory }) => {
     
     const country_ISO = Object.keys(data[0])[0];
@@ -131,7 +131,7 @@ const TestChart = ({ dataHistory }) => {
 
 
 
-/*
+
 const TestChart = ({ data, dataHistory, backupData }) => {
     
     const country_ISO = Object.keys(data[0])[0];
