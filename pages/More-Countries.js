@@ -36,7 +36,8 @@ const AllCountries = ({ countryList }) => {
         { iso: "OWID_EUN", country: "European Union" },
         { iso: "OWID_EUR", country: "Europe" },
         { iso: "OWID_ASI", country: "Asia" }, 
-        { iso: "OWID_AFR", country: "Africa" }
+        { iso: "OWID_AFR", country: "Africa" },
+        { iso: "USA", country: "United States" }
     ];
 
     const speicalListChecker = [

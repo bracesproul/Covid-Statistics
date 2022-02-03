@@ -91,6 +91,7 @@ export const getStaticProps = async () => {
                             daily_deaths: 0,
                             cumulative_fatality_rate: 0,
                             iso: item.iso,
+                            date: item.date
                         }})
                     }
                 })
@@ -212,6 +213,7 @@ function ActiveCases({ data }) {
                     fatalityRate = (totalDeaths / totalCases) * 100;
                     fatalityRate = fatalityRate.toFixed(2) + '%';
                 }
+                console.log(dataToUse);
                 return (
                 <article className={styles.Card2} key={index}>
                     <header>
@@ -220,7 +222,8 @@ function ActiveCases({ data }) {
                         {dataToUse.total_deaths[0].includes(', 2020') || dataToUse.total_deaths[0].includes(', 2021') || dataToUse.total_deaths[0].includes(', 2022') ? <OutDatedValue nameOfData="Total Deaths" data={dataToUse.total_deaths[1]} dataDate={dataToUse.total_deaths[0]} currentDate={currentDate()} /> : <p>Total Deaths: <strong className={styles.deaths}>{dataToUse.total_deaths}</strong></p>}
                         {dataToUse.daily_cases[0].includes(', 2020') || dataToUse.daily_cases[0].includes(', 2021') || dataToUse.daily_cases[0].includes(', 2022') ? <OutDatedValue nameOfData="New Cases" data={dataToUse.daily_cases[1]} dataDate={dataToUse.daily_cases[0]} currentDate={currentDate()} /> : <p>New Cases: <strong className={styles.cases}>{dataToUse.daily_cases}</strong></p>}
                         {dataToUse.daily_deaths[0].includes(', 2020') || dataToUse.daily_deaths[0].includes(', 2021') || dataToUse.daily_deaths[0].includes(', 2022') ? <OutDatedValue nameOfData="New Deaths" data={dataToUse.daily_deaths[1]} dataDate={dataToUse.daily_deaths[0]} currentDate={currentDate()} /> : <p>New Deaths: <strong className={styles.deaths}>{dataToUse.daily_deaths}</strong></p>}
-                        <p>Fatality Rate: <strong>{fatalityRate}</strong></p>
+                        <p>Fatality Rate: <strong className="deaths">{fatalityRate}</strong></p>
+                        <p>Date: <strong className={styles.text}>{dataToUse.date}</strong></p>
                         <p><strong>{item.date}</strong></p>
                         <p style={{ textDecoration: "underline" }} className={styles.LinkStyle}><Link href={{pathname: `/${dataToUse.iso}`}}>Get more data</Link></p>
                     </header>

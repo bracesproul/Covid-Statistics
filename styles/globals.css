@@ -40,7 +40,7 @@ a {
 }
 
 ::-webkit-scrollbar {
-  overflow: scroll;
+  overflow: visible;
   background: linear-gradient(to right, rgb(53, 53, 53), rgb(33, 33, 33));
 }
 
