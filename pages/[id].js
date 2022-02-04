@@ -1,14 +1,14 @@
 import { useRouter } from 'next/router'
 import axios from 'axios';
 import data_historyV from '../components/covid_data_history.json';
-import { HeaderBar, findEuro } from '../components/header';
+import { HeaderBar } from '../components/header';
 import { readData } from '../components/readDataHistory';
 import { OutDatedValue, OutdatedChart } from '../components/outDatedValue';
 import { currentDate } from '../components/dates';
-import { getDateForRequest } from './index.js';
 import { AreaChart, XAxis, YAxis, Tooltip, Area, ResponsiveContainer } from 'recharts';
 import iso_and_country_list from '../components/iso_and_country_list';
-import { useEffect, useState } from 'react';
+import { CreditsTag } from '../components/CreditsTag';
+
 let globalQuerryId;
 export default function Home({ data }) {
     const router = useRouter()
@@ -24,6 +24,7 @@ export default function Home({ data }) {
                 <CountryData data={data} />
             </div>
             <TestChart dataHistory={dataHistory} />
+            <CreditsTag />
         </div>
     )
 }
@@ -69,6 +70,7 @@ export const getStaticProps = async ({ params }) => {
                         dataV[0][paramId].total_cases = item.total_cases;
                         dataV[0][paramId].country = item.country;
                         dataV[0][paramId].iso = item.iso;
+                        dataV[0][paramId].date = item.date;
                     }
                 })
 
@@ -163,6 +165,7 @@ const CountryData = ({ data }) => {
     let fully_vaccinated_people = dataToUse.fully_vaccinated_people;
     let vaccines_administered = dataToUse.vaccines_administered;
     let daily_tests = dataToUse.daily_tests;
+    let date = dataToUse.date;
 
     const DataDisplayer = ({title, data, uiClass}) => {
         if (!data) return null
@@ -191,7 +194,7 @@ const CountryData = ({ data }) => {
                 <DataDisplayer title="Fully Vaccinated Population" data={fully_vaccinated_people} uiClass="good-things" />
                 <DataDisplayer title="Vaccines Administered" data={vaccines_administered} uiClass="good-things" />
                 <DataDisplayer title="Daily Tests" data={daily_tests} uiClass="good-things" />
-            
+                <DataDisplayer title="Date" data={date} uiClass="text" />
         </article>
     )
 }
@@ -235,7 +238,7 @@ const TestChart = ({ dataHistory }) => {
         <div className="charts-container">
             <div className="chart">
             <h1 className="country-title">Cases*</h1>
-            <ResponsiveContainer width={800} height={325}>
+            <ResponsiveContainer width={800} height={350} >
                 <AreaChart data={data}
                 margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                 <XAxis dataKey="date" />
@@ -247,7 +250,7 @@ const TestChart = ({ dataHistory }) => {
             </div>
             <div className="chart">
             <h1 className="country-title">Deaths*</h1>
-            <ResponsiveContainer width={800} height={325}>
+            <ResponsiveContainer width={800} height={350} >
                 <AreaChart data={data}
                 margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                 <XAxis dataKey="date" />
@@ -260,3 +263,4 @@ const TestChart = ({ dataHistory }) => {
         </div>
     )
 }
+

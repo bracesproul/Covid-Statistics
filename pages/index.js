@@ -5,6 +5,7 @@ import { OutDatedValue } from '../components/outDatedValue';
 import axios from 'axios';
 import { getAnalytics, logEvent } from "firebase/analytics";
 import { initializeApp } from 'firebase/app';
+import { CreditsTag } from '../components/CreditsTag';
 import { useState } from 'react';
 
 const firebaseConfig = {
@@ -25,6 +26,7 @@ export default function Home({ data }) {
     <div className="background">
         <HeaderBar />
         <ActiveCases data={data} />
+        <CreditsTag />
     </div>
   )
 }
@@ -213,7 +215,6 @@ function ActiveCases({ data }) {
                     fatalityRate = (totalDeaths / totalCases) * 100;
                     fatalityRate = fatalityRate.toFixed(2) + '%';
                 }
-                console.log(dataToUse);
                 return (
                 <article className={styles.Card2} key={index}>
                     <header>
