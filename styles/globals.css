@@ -263,3 +263,14 @@ a {
   display: inline-flex;
   margin-top: 5rem;
 }
+
+.credits-text {
+  text-align: center;
+  color: #b3b3bf;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.credits-text-link {
+  text-decoration: underline;
+}
