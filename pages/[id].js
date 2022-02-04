@@ -51,22 +51,22 @@ export const getStaticProps = async ({ params }) => {
             const result = await axios.request(options)
             .then(async res => {
                 dataV.push({[paramId]: {
-                    total_cases: '',
-                    total_deaths: '',
-                    total_hospitalized: '',
-                    total_icu: '',
-                    daily_cases: '',
-                    daily_deaths: '',
-                    fatality_rate_7_day_avg: '',
-                    cumulative_fatality_rate: '',
-                    daily_tests: '',
-                    vaccines_administered: '',
-                    fully_vaccinated_people: '',
-                    country: '',
-                    iso: '',
-                    date: '',
+                    total_cases: null,
+                    total_deaths: null,
+                    total_hospitalized: null,
+                    total_icu: null,
+                    daily_cases: null,
+                    daily_deaths: null,
+                    fatality_rate_7_day_avg: null,
+                    cumulative_fatality_rate: null,
+                    daily_tests: null,
+                    vaccines_administered: null,
+                    fully_vaccinated_people: null,
+                    country: null,
+                    iso: null,
+                    date: null
                 }})
-                const total_cases = await res.data[0].total_cases.filter(item => {
+                await res.data[0].total_cases.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].total_cases = item.total_cases;
                         dataV[0][paramId].country = item.country;
@@ -75,61 +75,61 @@ export const getStaticProps = async ({ params }) => {
                     }
                 })
 
-                const total_deaths = await res.data[1].total_deaths.filter(item => {
+                await res.data[1].total_deaths.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].total_deaths = item.total_deaths;
                     }
                 })
                 
-                const total_hospitalized = await res.data[2].total_hospitalized.filter(item => {
+                await res.data[2].total_hospitalized.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].total_hospitalized = item.current_hospitalized;
                     }
                 })
 
-                const total_icu = await res.data[3].total_icu.filter(item => {
+                await res.data[3].total_icu.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].total_icu = item.current_icu;
                     }
                 })
 
-                const daily_cases = await res.data[4].daily_cases.filter(item => {
+                await res.data[4].daily_cases.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].daily_cases = item.cases;
                     }
                 })
 
-                const daily_deaths = await res.data[5].daily_deaths.filter(item => {
+                await res.data[5].daily_deaths.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].daily_deaths = item.deaths;
                     }
                 })
 
-                const fatality_rate_7_day_avg = await res.data[6].fatality_rate_7_day_avg.filter(item => {
+                await res.data[6].fatality_rate_7_day_avg.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].fatality_rate_7_day_avg = item.death_rate_7;
                     }
                 })
 
-                const cumulative_fatality_rate = await res.data[7].cumulative_fatality_rate.filter(item => {
+                await res.data[7].cumulative_fatality_rate.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].cumulative_fatality_rate = item.cumulative_fatality_rate;
                     }
                 })
 
-                const daily_tests = await res.data[8].daily_tests.filter(item => {
+                await res.data[8].daily_tests.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].daily_tests = item.new_tests;
                     }
                 })
 
-                const vaccines_administered = await res.data[9].vaccines_administered.filter(item => {
+                await res.data[9].vaccines_administered.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].vaccines_administered = item.vaccines_administered;
                     }
                 })
 
-                const fully_vaccinated_people = await res.data[10].fully_vaccinated_people.filter(item => {
+                await res.data[10].fully_vaccinated_people.filter(item => {
                     if (item.iso === paramId) {
                         dataV[0][paramId].fully_vaccinated_people = item.people_fully_vaccinated;
                     }

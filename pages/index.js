@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { readData } from '../components/readDataHistory';
 import { AreaChart, XAxis, YAxis, Tooltip, Area, ResponsiveContainer } from 'recharts';
 import { Chart } from '../components/Chart';
+import { BrowserView, MobileView, isBrowser, isMobile } from 'react-device-detect';
 
 const firebaseConfig = {
     apiKey: process.env.FIREBASE_API_KEY,
@@ -27,12 +28,20 @@ const app = initializeApp(firebaseConfig);
 export default function Home({ data }) {
     const dataHistory = readData("OWID_WRL")
   return (
-    <div className="background">
-        <HeaderBar />
-        <ActiveCases data={data} />
-        <FinalChart dataHistory={dataHistory} />
-        <CreditsTag />
-    </div>
+      <>
+      <BrowserView>
+        <h1>This is rendered only in browser</h1>
+        <div className="background">
+            <HeaderBar />
+            <ActiveCases data={data} />
+            <FinalChart dataHistory={dataHistory} />
+            <CreditsTag />
+        </div>
+        </BrowserView>
+        <MobileView>
+        <h1>This is rendered only on mobile</h1>
+        </MobileView>
+      </>
   )
 }
 
@@ -93,10 +102,10 @@ export const getStaticProps = async () => {
                         dataV.push({[item.country]: {
                             country: item.country,
                             total_cases: item.total_cases,
-                            total_deaths: 0,
-                            daily_cases: 0,
-                            daily_deaths: 0,
-                            cumulative_fatality_rate: 0,
+                            total_deaths: null,
+                            daily_cases: null,
+                            daily_deaths: null,
+                            cumulative_fatality_rate: null,
                             iso: item.iso,
                             date: item.date
                         }})
@@ -197,10 +206,10 @@ function ActiveCases({ data }) {
                 const countryKey = Object.keys(item)[0];
                 const dataToUse = item[countryKey];
                 let fatalityRate = dataToUse.cumulative_fatality_rate;
-                let totalCases;
-                let totalDeaths;
-                // console.log(dataToUse);
-                if (fatalityRate === 0) {
+                let totalCases = null;
+                let totalDeaths = null;
+
+                if (fatalityRate === null) {
                     if (dataToUse.total_cases.includes('million')) {
                         let totalCasesTemp = dataToUse.total_cases.split(' ')[0];
                         totalCases = Number(totalCasesTemp) * 1000000;
