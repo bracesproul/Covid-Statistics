@@ -30,7 +30,6 @@ export default function Home({ data }) {
   return (
       <>
       <BrowserView>
-        <h1>This is rendered only in browser</h1>
         <div className="background">
             <HeaderBar />
             <ActiveCases data={data} />
@@ -83,111 +82,83 @@ const currentDate = () => {
     return toBeReturned;
 }
 
-
 export const getStaticProps = async () => {
     const popularCountries = ["Canada", "Russia", "India", "Brazil", "Switzerland", "Japan", "United Kingdom", "Germany", "Mexico", "Italy", "China", "United States", "Spain", "France"]
-    const date = getDateForRequest();
-    const options = {
-        method: 'GET',
-        url: 'https://covid-data-and-api.herokuapp.com/get-data/data',
-    };
+    const dataSet = [{
+        "Brazil": {},
+        "Canada": {},
+        "China": {},
+        "France": {},
+        "Germany": {},
+        "India": {},
+        "Italy": {},
+        "Japan": {},
+        "Mexico": {},
+        "Russia": {},
+        "Spain": {},
+        "Switzerland": {},
+        "United Kingdom": {},
+        "United States": {}
+      }];
     const requestedData = new Promise(async (res, rej) => {
-        let dataV = [];
-        popularCountries.map(async (country, index) => {
-            // get total cases 
-            await axios.request(options)
-            .then(res => {
-                res.data[0].total_cases.map(item => {
-                    if (item.country === country) {
-                        dataV.push({[item.country]: {
-                            country: item.country,
-                            total_cases: item.total_cases,
-                            total_deaths: null,
-                            daily_cases: null,
-                            daily_deaths: null,
-                            cumulative_fatality_rate: null,
-                            iso: item.iso,
-                            date: item.date
-                        }})
-                    }
-                })
-            })
-            .catch(err => {
-                console.error('ERROR -', err);
-            }); 
-    
-            // get total deaths
-            await axios.request(options)
-            .then(res => {
-                res.data[1].total_deaths.map(item => {
-                    if (item.country === country) {
-                        dataV.map(data => {
-                            if (data[country]) {
-                                data[country].total_deaths = item.total_deaths
-                            }
-                        })
-                    }
-                })
-            })
-            .catch(err => {
-                console.error('ERROR -', err);
-            });
-    
-            // get daily cases
-            await axios.request(options)
-            .then(res => {
-                res.data[4].daily_cases.map(item => {
-                    if (item.country === country) {
-                        dataV.map(data => {
-                            if (data[country]) {
-                                data[country].daily_cases = item.cases
-                            }
-                        })
-                    }
-                })
-            })
-            .catch(err => {
-                console.error('ERROR -', err);
-            });
-            
-            // get daily deaths
-            await axios.request(options)
-            .then(res => {
-                res.data[5].daily_deaths.map(item => {
-                    if (item.country === country) {
-                        dataV.map(data => {
-                            if (data[country]) {
-                                data[country].daily_deaths = item.deaths
-                            }
-                        })
-                    }
-                })
-            })
-            .catch(err => {
-                console.error('ERROR -', err);
-            });
-            
-            // get cumulative fatality rate
-            await axios.request(options)
-            .then(res => {
-                res.data[7].cumulative_fatality_rate.map(item => {
-                    if (item.country === country) {
-                        dataV.map(data => {
-                            if (data[country]) {
-                                data[country].cumulative_fatality_rate = item.cumulative_fatality_rate
-                            }
-                        })
-                    }
-                })
-            })
-            .catch(err => {
-                console.error('ERROR -', err);
-            });
-            res(dataV);
+        await axios({
+            method: 'get',
+            url: 'https://api.covidstatistics.co/api/routes/data',
         })
-        
-    })
+        .then(async res => {
+            await res.data[0].total_cases.map(data => {
+                popularCountries.map(country => {
+                    if (data.country === country)  {
+                        dataSet[0][country].total_cases = data.total_cases;
+                        dataSet[0][country].iso = data.iso;
+                        dataSet[0][country].date = data.date;
+                        dataSet[0][country].country = data.country;
+                    }
+                })
+            });;
+            await res.data[1].total_deaths.map(data => {
+                popularCountries.map(country => {
+                    if (data.country === country)  {
+                        dataSet[0][country].total_deaths = data.total_deaths;
+                    }
+                })
+            });
+            await res.data[4].daily_cases.map(data => {
+                popularCountries.map(country => {
+                    if (data.country === country)  {
+                        dataSet[0][country].daily_cases = data.cases;
+                    }
+                })
+            });
+            await res.data[5].daily_deaths.map(data => {
+                popularCountries.map(country => {
+                    if (data.country === country)  {
+                        dataSet[0][country].daily_deaths = data.deaths;
+                    }
+                })
+            });
+        });
+        dataSet.map(data => {
+            popularCountries.map(country => {
+                let total_cases = data[country].total_cases;
+                let total_deaths = data[country].total_deaths;
+                if (total_cases.includes("million")) {
+                    total_cases = Number((total_cases.split(" million")[0] * 1000000));
+                } else {
+                    total_cases = Number(total_cases.split(",").join(""));
+                }
+                if (total_deaths.includes("million")) {
+                    total_deaths = Number((total_deaths.split(" million")[0] * 1000000));
+                } else {
+                    total_deaths = Number(total_deaths.split(",").join(""));
+                }
+                const rate = (((total_deaths / total_cases) * 100).toFixed(2) + "%");
+                data[country].fatality_rate = rate;
 
+            });
+        })
+        res(dataSet);
+    })
     const data = await requestedData;
 
     return {
@@ -195,60 +166,54 @@ export const getStaticProps = async () => {
         revalidate: 86400
     }
 }
-
 function ActiveCases({ data }) {
+    if (!data) return null;
+    const popularCountries = ["Canada", "Russia", "India", "Brazil", "Switzerland", "Japan", "United Kingdom", "Germany", "Mexico", "Italy", "China", "United States", "Spain", "France"]
+    const finalReturn = popularCountries.map(country => {
+        const toReturn = data.map((data, index) => {
+            if (data[country].country === country) {
+                return (
+                    <article className={styles.Card2} key={index}>
+                        <header>
+                            <p><strong>{data[country].country}</strong></p>
+                            {data[country].total_cases.includes(', 2020') || data[country].total_cases.includes(', 2021') || data[country].total_cases.includes(', 2022') ? 
+                            <OutDatedValue nameOfData="Total Cases" data={data[country].total_cases} dataDate={data[country].total_cases} currentDate={currentDate()} /> : 
+                            <p>Total Cases: <strong className={styles.cases}>{data[country].total_cases}</strong></p>}
+
+                            {data[country].total_deaths.includes(', 2020') || data[country].total_deaths.includes(', 2021') || data[country].total_deaths.includes(', 2022') ? 
+                            <OutDatedValue nameOfData="Total Deaths" data={data[country].total_deaths} dataDate={data[country].total_deaths} currentDate={currentDate()} /> : 
+                            <p>Total Deaths: <strong className={styles.deaths}>{data[country].total_deaths}</strong></p>}
+
+                            {data[country].daily_cases.includes(', 2020') || data[country].daily_cases.includes(', 2021') || data[country].daily_cases.includes(', 2022') ? 
+                            <OutDatedValue nameOfData="Daily Cases" data={data[country].daily_cases} dataDate={data[country].daily_cases} currentDate={currentDate()} /> : 
+                            <p>Daily Cases: <strong className={styles.cases}>{data[country].daily_cases}</strong></p>}
+
+                            {data[country].daily_deaths.includes(', 2020') || data[country].daily_deaths.includes(', 2021') || data[country].daily_deaths.includes(', 2022') ? 
+                            <OutDatedValue nameOfData="Daily Deaths" data={data[country].daily_deaths} dataDate={data[country].daily_deaths} currentDate={currentDate()} /> : 
+                            <p>Daily Deaths: <strong className={styles.deaths}>{data[country].daily_deaths}</strong></p>}
+
+                            {data[country].fatality_rate.includes(', 2020') || data[country].fatality_rate.includes(', 2021') || data[country].fatality_rate.includes(', 2022') ? 
+                            <OutDatedValue nameOfData="Fatality Rate" data={data[country].fatality_rate} dataDate={data[country].fatality_rate} currentDate={currentDate()} /> : 
+                            <p>Fatality Rate: <strong className={styles.deaths}>{data[country].fatality_rate}</strong></p>}
+                            <p><strong>{data[country].date}</strong></p>
+                            <p style={{ textDecoration: "underline" }} className={styles.LinkStyle}><Link href={{pathname: `/${data[country].iso}`}}>Get more data</Link></p>
+                        </header>
+                    </article>
+                )
+            }
+        })
+        return toReturn;
+    })
     return (
         <div>
             <h1 className={styles.Header}>Active Cases</h1>
             <section className={styles.cardList2}>
-                <p>DATA HERE</p>
-                { data.map((item, index) => {
-                const countryKey = Object.keys(item)[0];
-                const dataToUse = item[countryKey];
-                let fatalityRate = dataToUse.cumulative_fatality_rate;
-                let totalCases = null;
-                let totalDeaths = null;
-
-                if (fatalityRate === null) {
-                    if (dataToUse.total_cases.includes('million')) {
-                        let totalCasesTemp = dataToUse.total_cases.split(' ')[0];
-                        totalCases = Number(totalCasesTemp) * 1000000;
-                    } else {
-                        let totalCasesTemp = dataToUse.total_cases.split(' ')[0];
-                        totalCases = Number(totalCasesTemp);
-                    }
-
-                    if (dataToUse.total_deaths.includes('million')) {
-                        let totalDeathsTemp1 = dataToUse.total_deaths.split(' ')[0];
-                        totalDeaths = Number(totalDeathsTemp1) * 1000000;
-                    } else {
-                        let totalDeathsTemp2 = dataToUse.total_deaths.split(' ')[0];
-                        totalDeaths = Number(totalDeathsTemp2.split(',').join(''));
-                    }
-
-                    fatalityRate = (totalDeaths / totalCases) * 100;
-                    fatalityRate = fatalityRate.toFixed(2) + '%';
-                }
-                return (
-                <article className={styles.Card2} key={index}>
-                    <header>
-                        <p><strong>{dataToUse.country}</strong></p>
-                        {dataToUse.total_cases[0].includes(', 2020') || dataToUse.total_cases[0].includes(', 2021') || dataToUse.total_cases[0].includes(', 2022') ? <OutDatedValue nameOfData="Total Cases" data={dataToUse.total_cases[1]} dataDate={dataToUse.total_cases[0]} currentDate={currentDate()} /> : <p>Total Cases: <strong className={styles.cases}>{dataToUse.total_cases}</strong></p>}
-                        {dataToUse.total_deaths[0].includes(', 2020') || dataToUse.total_deaths[0].includes(', 2021') || dataToUse.total_deaths[0].includes(', 2022') ? <OutDatedValue nameOfData="Total Deaths" data={dataToUse.total_deaths[1]} dataDate={dataToUse.total_deaths[0]} currentDate={currentDate()} /> : <p>Total Deaths: <strong className={styles.deaths}>{dataToUse.total_deaths}</strong></p>}
-                        {dataToUse.daily_cases[0].includes(', 2020') || dataToUse.daily_cases[0].includes(', 2021') || dataToUse.daily_cases[0].includes(', 2022') ? <OutDatedValue nameOfData="New Cases" data={dataToUse.daily_cases[1]} dataDate={dataToUse.daily_cases[0]} currentDate={currentDate()} /> : <p>New Cases: <strong className={styles.cases}>{dataToUse.daily_cases}</strong></p>}
-                        {dataToUse.daily_deaths[0].includes(', 2020') || dataToUse.daily_deaths[0].includes(', 2021') || dataToUse.daily_deaths[0].includes(', 2022') ? <OutDatedValue nameOfData="New Deaths" data={dataToUse.daily_deaths[1]} dataDate={dataToUse.daily_deaths[0]} currentDate={currentDate()} /> : <p>New Deaths: <strong className={styles.deaths}>{dataToUse.daily_deaths}</strong></p>}
-                        <p>Fatality Rate: <strong className="deaths">{fatalityRate}</strong></p>
-                        <p>Date: <strong className={styles.text}>{dataToUse.date}</strong></p>
-                        <p><strong>{item.date}</strong></p>
-                        <p style={{ textDecoration: "underline" }} className={styles.LinkStyle}><Link href={{pathname: `/${dataToUse.iso}`}}>Get more data</Link></p>
-                    </header>
-                </article>
-                )
-              }) }
-          </section>
+                {finalReturn}
+            </section>
       </div>
   )
 }
+
 
 const FinalChart = ({ dataHistory }) => {
     return (

@@ -43,7 +43,7 @@ export const getStaticProps = async ({ params }) => {
     const paramId = params.id;
     const options = {
         method: 'GET',
-        url: 'https://covid-data-and-api.herokuapp.com/get-data/data',
+        url: 'https://api.covidstatistics.co/api/routes/data',
     };
     const requestedData = new Promise(async (res, rej) => {
         let dataV = [];
