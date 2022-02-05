@@ -3,28 +3,12 @@ import Link from 'next/link'
 import { HeaderBar } from '../components/header';
 import { OutDatedValue } from '../components/outDatedValue';
 import axios from 'axios';
-import { getAnalytics, logEvent } from "firebase/analytics";
-import { initializeApp } from 'firebase/app';
 import { CreditsTag } from '../components/CreditsTag';
-import { useState } from 'react';
 import { readData } from '../components/readDataHistory';
-import { AreaChart, XAxis, YAxis, Tooltip, Area, ResponsiveContainer } from 'recharts';
 import { Chart } from '../components/Chart';
-import { BrowserView, MobileView, isBrowser, isMobile } from 'react-device-detect';
+import { BrowserView, MobileView } from 'react-device-detect';
 
-const firebaseConfig = {
-    apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: "project-id.firebaseapp.com",
-    databaseURL: "https://project-id.firebaseio.com",
-    projectId: "project-id",
-    storageBucket: "project-id.appspot.com",
-    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_APP_ID,
-    measurementId: process.env.FIREBASE_MEASUREMENT_ID
-};
-const app = initializeApp(firebaseConfig);
-//const analytics = getAnalytics();
-// 
+
 export default function Home({ data }) {
     const dataHistory = readData("OWID_WRL")
   return (

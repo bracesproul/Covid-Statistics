@@ -1,5 +1,4 @@
 import { HeaderBar } from '../components/header.js';
-import axios from 'axios';
 import Link from 'next/link'
 import { useState } from 'react';
 import iso_and_country_list from '../components/iso_and_country_list';

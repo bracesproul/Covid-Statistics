@@ -1,11 +1,9 @@
 import { useRouter } from 'next/router'
 import axios from 'axios';
-import data_historyV from '../components/covid_data_history.json';
 import { HeaderBar } from '../components/header';
 import { readData } from '../components/readDataHistory';
-import { OutDatedValue, OutdatedChart } from '../components/outDatedValue';
+import { OutDatedValue } from '../components/outDatedValue';
 import { currentDate } from '../components/dates';
-import { AreaChart, XAxis, YAxis, Tooltip, Area, ResponsiveContainer } from 'recharts';
 import iso_and_country_list from '../components/iso_and_country_list';
 import { CreditsTag } from '../components/CreditsTag';
 import { Chart } from '../components/Chart';
